@@ -25,4 +25,4 @@
 + Process of creating bot must not be so hard and must not take more time than we suppose, but, process of logic constructions with collected information can be harder than we think, and also can take more time.
 + Also human risk, someone can feel himself sick, and couldn't work for some days, in that case we also can lose time.
 
-**Other tasks of week 4, you can find here, in separate(appropriate to tasks name) files.
+## Other tasks of week 4, you can find here, in separate(appropriate to tasks name) files.
