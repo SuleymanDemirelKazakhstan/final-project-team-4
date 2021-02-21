@@ -17,9 +17,12 @@
 ## User story: 
 + As a people, who live in 21st century, the century of the high technologies, I want to receive services in more automated format so I can save my time and money.
 
+# Week 4:
+
 ## Risks:
 + Our recommendation system of bot, which is a key differentiator of your project, may be difficult to set up correctly. We must be pretty accurate in process of collecting information, and by processing of this information, make correct suggetions for clients.
 + The process of seeking and processing of information can take more time, than we think.
 + Process of creating bot must not be so hard and must not take more time than we suppose, but, process of logic constructions with collected information can be harder than we think, and also can take more time.
 + Also human risk, someone can feel himself sick, and couldn't work for some days, in that case we also can lose time.
 
+**Other tasks of week 4, you can find here, in separate(appropriate to tasks name) files.
