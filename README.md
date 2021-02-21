@@ -1,4 +1,5 @@
 # CSS 410 Research tools and methods
+Week 3:
 ## Team members
 + **Dyussenova Anel** - Backend Developer (GitHub account: **)
 + **Valiyeva Nassiba** - Frontend Developer (GitHub account: *Nasibka*)
