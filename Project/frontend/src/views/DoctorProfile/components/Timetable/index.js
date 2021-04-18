@@ -4,10 +4,15 @@ import { makeStyles } from '@material-ui/styles';
 import {
   Grid
 } from '@material-ui/core';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import Carousel from 'react-elastic-carousel'
+import Item from "./Item";
+import "./styles.css";
+
+
+// import { Swiper, SwiperSlide } from 'swiper/react';
 // import 'swiper/swiper.scss';
-import 'swiper/swiper-bundle.min.css';
-import 'swiper/swiper.min.css';
+// import 'swiper/swiper-bundle.min.css';
+// import 'swiper/swiper.min.css';
 
 const useStyles = makeStyles(() => ({
   root: {} ,
@@ -26,9 +31,23 @@ const useStyles = makeStyles(() => ({
     fontWeight:'bold',
     fontSize:'2rem',
     margin:'1rem'
+  },
+  time:{
+    margin:'0',
+    fontWeight:'bold',
+  },
+  day:{
+    margin:'0.2rem'
   }
+
 }));
 
+const breakPoints = [
+  { width: 1, itemsToShow: 1 },
+  { width: 550, itemsToShow: 2, itemsToScroll: 2 },
+  { width: 768, itemsToShow: 4 },
+  { width: 1200, itemsToShow: 4 }
+];
 
 const Timetable = props => {
   const { className, ...rest } = props;
@@ -40,6 +59,14 @@ const Timetable = props => {
     fontSize:props.isDesktop ? '1.8rem' : '1.2rem'
   }
 
+  const items= [
+    {id: 1, time: '9:30 - 10:30',day:'ПОНЕДЕЛЬНИК'},
+    {id: 2, time: '9:30 - 10:30',day:'ПОНЕДЕЛЬНИК'},
+    {id: 3, time: '9:30 - 10:30',day:'ПОНЕДЕЛЬНИК'},
+    {id: 4, time: '14:00 - 15:00',day:'Вторник'},
+    {id: 5, time: '14:00 - 15:00',day:'Вторник'}
+  ]
+  // const [items, setItems] = useState([1, 2, 3, 4, 5, 6, 7, 8]);
   return (
      
     <Grid container style={marginTop}>
@@ -47,25 +74,13 @@ const Timetable = props => {
             <h2 className={classes.textCenter} style={header}>СВОБОДНОЕ ВРЕМЯ ДЛЯ ЗАПИСИ</h2>
         </Grid>
 
-        <Grid container justify='space-around' >
-          <Swiper
-                  spaceBetween={50}
-                  slidesPerView={3}
-                  navigation
-                  pagination={{ clickable: true }}
-                  // loop = {true}
-                  // onSwiper={(swiper) => console.log(swiper)}
-                  // onSlideChange={() => console.log('slide change')}   
-          >
-            <SwiperSlide>Slide 1</SwiperSlide>
-            <SwiperSlide>Slide 2</SwiperSlide>
-            <SwiperSlide>Slide 3</SwiperSlide>
-            <SwiperSlide>Slide 4</SwiperSlide>
-            <SwiperSlide>Slide 5</SwiperSlide>
-            <SwiperSlide>Slide 6</SwiperSlide>
-            <SwiperSlide>Slide 7</SwiperSlide>
-            <SwiperSlide>Slide 8</SwiperSlide>
-          </Swiper>
+        <Grid container >
+          <Carousel breakPoints={breakPoints} pagination={false} focusOnSelect={true}>
+            {items.map((item) => (
+              <Item key={item.id}><p className={classes.time}>{item.time}</p><p className={classes.day}>{item.day}</p> </Item>
+            ))}
+          </Carousel>
+          {/* {items.map(item => <div key={item.id}>{item.title}</div>)} */}
         </Grid>
     </Grid>
   );

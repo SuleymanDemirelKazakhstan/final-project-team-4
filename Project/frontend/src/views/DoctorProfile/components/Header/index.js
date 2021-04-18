@@ -7,13 +7,12 @@ import {
 } from '@material-ui/core';
 // import {useImage} from 'react-image'
 import {Img} from 'react-image'
+import ReactStars from "react-rating-stars-component";
+
 
 
 const useStyles = makeStyles(() => ({
   root: {} ,
-  // image:{
-    
-  // },
   fio:{
     color:'#1963C6',
     fontWeight:600,
@@ -46,6 +45,17 @@ const Header = props => {
     marginRight: 'auto',
     display: 'block',
   }
+  const stars = {
+    size: 45,
+    value: 3.5,
+    edit: false,
+    isHalf: true,
+    color: '#1963C6',
+    activeColor: '#1963C6',
+    emptyIcon: <i className="far fa-star" />,
+    halfIcon: <i className="fa fa-star-half-alt" />,
+    filledIcon: <i className="fa fa-star" />,
+  };
 
 
   return (
@@ -56,14 +66,13 @@ const Header = props => {
                 container={(children) => {
                     return <div className={classes.image}>{children}</div>
                 }}
-                // className = {classes.image}
             />
         </Grid>
 
         <div style={header_container}>
           <Grid container spacing={1}>
               <Grid item md={12} xs={12}>
-                  stars
+                <ReactStars {...stars} />
               </Grid>
 
               <Grid item md={12} xs={12}>
