@@ -16,7 +16,7 @@ const anel;
 // import 'swiper/swiper.min.css';
 
 
-
+const anel2;
 const nasiba2;
 const useStyles = makeStyles(() => ({
   root: {} ,
