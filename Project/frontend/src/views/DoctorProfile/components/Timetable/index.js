@@ -15,9 +15,12 @@ const anel;
 // import 'swiper/swiper-bundle.min.css';
 // import 'swiper/swiper.min.css';
 
+<<<<<<< HEAD
 
 const anel2;
 const nasiba2;
+=======
+>>>>>>> nasiba
 const useStyles = makeStyles(() => ({
   root: {} ,
   textCenter:{
