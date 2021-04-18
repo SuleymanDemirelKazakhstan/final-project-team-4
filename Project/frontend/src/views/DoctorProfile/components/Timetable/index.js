@@ -15,6 +15,9 @@ const anel;
 // import 'swiper/swiper-bundle.min.css';
 // import 'swiper/swiper.min.css';
 
+
+
+const nasiba2;
 const useStyles = makeStyles(() => ({
   root: {} ,
   textCenter:{
