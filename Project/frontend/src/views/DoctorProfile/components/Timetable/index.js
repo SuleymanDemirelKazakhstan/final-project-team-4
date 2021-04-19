@@ -8,16 +8,11 @@ import Carousel from 'react-elastic-carousel'
 import Item from "./Item";
 import "./styles.css";
 
-const nasiba;
-const anel;
 // import { Swiper, SwiperSlide } from 'swiper/react';
 // import 'swiper/swiper.scss';
 // import 'swiper/swiper-bundle.min.css';
 // import 'swiper/swiper.min.css';
 
-
-const anel2;
-const nasiba2;
 const useStyles = makeStyles(() => ({
   root: {} ,
   textCenter:{
