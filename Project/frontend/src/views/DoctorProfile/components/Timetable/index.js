@@ -8,8 +8,6 @@ import Carousel from 'react-elastic-carousel'
 import Item from "./Item";
 import "./styles.css";
 
-const nasiba;
-const anel;
 // import { Swiper, SwiperSlide } from 'swiper/react';
 // import 'swiper/swiper.scss';
 // import 'swiper/swiper-bundle.min.css';
