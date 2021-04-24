@@ -22,11 +22,50 @@ router.post('/', express.json(), (req, res)=>{
 
     });
 
-    function name(agent){
-        var name = agent.parameters['person'][0].name;
+    async function name(agent){
+        var name = agent.query;
+        console.log(name)
+        // let patient = await Patient.findOne({chat_id: agent.originalRequest.payload.data.from.id})
   
-        console.log(name);
-        agent.add(`${name}, какой Ваш возвраст?`);
+        // if (patient){
+        //   patient.firstName = name.split(' ')[1],
+        //   patient.lastName = name.split(' ')[0],
+        //   patient.patronymic = name.split(' ')[2]
+        //   patient.save();
+        // }else{
+        //   const new_patient = new Patient({
+        //     chat_id: agent.originalRequest.payload.data.from.id,
+        //     firstName: name.split(' ')[1],
+        //     lastName: name.split(' ')[0],
+        //     patronymic: name.split(' ')[2]
+        //   })
+        //   new_patient.save((err, saved) => {
+        //     if (err){
+        //       console.log(err)
+        //   }});
+        // }
+        
+        const answer = {
+          "text": `${name}, правильно?`,
+          "reply_markup": {
+            "keyboard": [
+              [
+                {
+                  "text": "Да",
+                  "callback_data": "Да"
+                }
+              ],
+              [
+                {
+                  "text": "Нет",
+                  "callback_data": "Нет"
+                }
+              ]
+            ]
+          }
+        };
+        agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+      
     }
 
     function age(agent){
@@ -46,14 +85,6 @@ router.post('/', express.json(), (req, res)=>{
 
     }
 
-
-    function namecustom(agent){
-        var name = agent.parameters['person'];
-  
-        console.log(name);
-        agent.add(`Hello`);
-
-    }
     
     function phone(agent){
         var name = agent.contexts[0].parameters['person'][0].name;
@@ -193,10 +224,146 @@ router.post('/', express.json(), (req, res)=>{
 
     }
 
+    async function yes(agent){
+      const prev_intent = Object.keys(agent.context.contexts)[0];
+      
+      var answer = ""
+      if (prev_intent == "namesurname-followup"){
+        answer = "Можете указать свой возраст"
+
+        agent.add(answer);
+      }
+      else if (prev_intent == "age-followup"){
+
+
+        var age = agent.context.contexts["age-followup"].parameters['age'].amount;
+        var unit = agent.context.contexts["age-followup"].parameters['age'].unit;
+        let patient = await Patient.findOne({chat_id: agent.originalRequest.payload.data.from.id})
+        answer = {
+          "text": "Укажите свой пол",
+          "reply_markup": {
+            "keyboard": [
+              [
+                {
+                  "text": "Женский",
+                  "callback_data": "Женский"
+                }
+              ],
+              [
+                {
+                  "text": "Мужской",
+                  "callback_data": "Мужской"
+                }
+              ]
+            ]
+          }
+        };
+        patient.age = parseInt(age);
+        await patient.save();
+
+
+        agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+      }
+      else if (prev_intent == "gender-followup"){
+
+        var gender = agent.context.contexts["gender-followup"].parameters.gender;
+        console.log(gender)
+
+        let patient = await Patient.findOne({chat_id: agent.originalRequest.payload.data.from.id})
+        answer = "Можете написать свой номер телефона"
+
+        patient.sex = gender;
+        await patient.save();
+
+        agent.add(answer);
+      }
+      else if (prev_intent == "phone-followup"){
+        var phone = agent.context.contexts["phone-followup"].parameters["phone-number"];
+        
+
+        let patient = await Patient.findOne({chat_id: agent.originalRequest.payload.data.from.id})
+        let name = patient.lastName + " " + patient.firstName + " " + patient.patronymic
+        let age = patient.age
+        let gender = patient.sex
+
+
+
+        patient.phoneNumber = phone;
+        await patient.save();
+
+        answer = {
+          "text": `Все правильно: \nИмя: ${name} \nВозраст: ${age} \nПол: ${gender} \nТелефон: ${phone}`,
+          "reply_markup": {
+            "keyboard": [
+              [
+                {
+                  "text": "Да",
+                  "callback_data": "Да"
+                }
+              ],
+              [
+                {
+                  "text": "Нет",
+                  "callback_data": "Нет"
+                }
+              ]
+            ]
+          }
+        };
+        agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+
+      }
+
+    }
+
+    
+    async function no(agent){
+      const prev_intent = Object.keys(agent.context.contexts)[0];
+      
+      var answer = ""
+
+      if (prev_intent == "namesurname-followup"){
+        answer = "Можете повторить свое имя"
+        agent.add(answer);
+        agent.setFollowupEvent("triggered")
+
+      }
+      else if (prev_intent == "age-followup"){
+        answer = "Можете повторить свой возраст"
+        agent.add(answer);
+      }
+      else if (prev_intent == "gender-followup"){
+        answer = {
+          "text": "Укажите свой пол",
+          "reply_markup": {
+            "keyboard": [
+              [
+                {
+                  "text": "Женский",
+                  "callback_data": "Женский"
+                }
+              ],
+              [
+                {
+                  "text": "Мужской",
+                  "callback_data": "Мужской"
+                }
+              ]
+            ]
+          }
+        };
+        agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+      
+      }
+      else if (prev_intent == "phone-followup"){
+        answer = "Можете повторить свой номер телефона"
+        agent.add(answer);
+      }    
+
+    }
 
 
     var intentMap = new Map();
-    intentMap.set('namecustom', namecustom )
     intentMap.set('NameSurname', name )
     intentMap.set('Age', age )
     intentMap.set('Gender', gender )
@@ -204,6 +371,8 @@ router.post('/', express.json(), (req, res)=>{
     intentMap.set('SpecializationList', spec ) 
     intentMap.set('DoctorList', doctors ) 
     intentMap.set('SymptomCheck', symptoms ) 
+    intentMap.set('Yes', yes ) 
+    intentMap.set('No', no ) 
 
     
 

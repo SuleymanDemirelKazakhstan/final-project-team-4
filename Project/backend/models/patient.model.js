@@ -4,6 +4,12 @@ const Schema = mongoose.Schema;
 
 const patientSchema = new Schema({
     
+    chat_id:{
+        type:Number,
+        required:true,
+        // unique:true,
+        // trim:true,
+    },
     firstName:{
         type:String,
         required:true,
@@ -16,19 +22,25 @@ const patientSchema = new Schema({
         // unique:true,
         // trim:true,
     },
-    phoneNumber:{
+    patronymic:{
         type:String,
         required:true,
         // unique:true,
         // trim:true,
     },
+    phoneNumber:{
+        type:String,
+        // required:true,
+        // unique:true,
+        // trim:true,
+    },
     sex:{
         type:String,
-        required:true,
+        // required:true,
     },
     age:{
         type:Number, 
-        required:true,
+        // required:true,
         // unique:true,
         // trim:true,
     },
