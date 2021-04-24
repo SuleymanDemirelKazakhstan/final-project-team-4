@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles, mergeClasses } from '@material-ui/styles';
 import {
   Grid
 } from '@material-ui/core';
 import Carousel from 'react-elastic-carousel'
 import Item from "./Item";
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+import Button from '@material-ui/core/Button';
+
 import "./styles.css";
 
-const nasiba;
-const anel;
 // import { Swiper, SwiperSlide } from 'swiper/react';
 // import 'swiper/swiper.scss';
 // import 'swiper/swiper-bundle.min.css';
 // import 'swiper/swiper.min.css';
 
-
-const anel2;
-const nasiba2;
 const useStyles = makeStyles(() => ({
   root: {} ,
   textCenter:{
@@ -42,6 +42,26 @@ const useStyles = makeStyles(() => ({
   },
   day:{
     margin:'0.2rem'
+  },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paper: {
+    backgroundColor: 'white',
+    // border: '2px solid #000',
+    // boxShadow: theme.shadows[5],
+    borderRadius:'0.5rem',
+    padding: '1.6rem',
+    fontFamily:"Roboto",
+    outline:'none'
+  },
+  buttons:{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginTop:'1.5rem'
   }
 
 }));
@@ -54,8 +74,22 @@ const breakPoints = [
 ];
 
 const Timetable = props => {
-  const { className, ...rest } = props;
+  // const { className } = props;
   const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  
+  const handleCloseAndSaveTime = () => {
+    setOpen(false);
+    console.log('kek')
+  };
+
   const marginTop = {
     marginTop:props.isDesktop ? '4rem' : '2rem'
   }
@@ -70,7 +104,6 @@ const Timetable = props => {
     {id: 4, time: '14:00 - 15:00',day:'Вторник'},
     {id: 5, time: '14:00 - 15:00',day:'Вторник'}
   ]
-  // const [items, setItems] = useState([1, 2, 3, 4, 5, 6, 7, 8]);
   return (
      
     <Grid container style={marginTop}>
@@ -81,10 +114,34 @@ const Timetable = props => {
         <Grid container >
           <Carousel breakPoints={breakPoints} pagination={false} focusOnSelect={true}>
             {items.map((item) => (
-              <Item key={item.id}><p className={classes.time}>{item.time}</p><p className={classes.day}>{item.day}</p> </Item>
+              <Item key={item.id} onClick={handleOpen}><p className={classes.time}>{item.time}</p><p className={classes.day}>{item.day}</p> </Item>
             ))}
           </Carousel>
-          {/* {items.map(item => <div key={item.id}>{item.title}</div>)} */}
+          <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            className={classes.modal}
+            open={open}
+            onClose={handleClose}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500,
+            }}
+          >
+            <Fade in={open}>
+              <div className={classes.paper}>
+                <h3 id="transition-modal-title">Хотите записаться на это время?</h3>
+                {/* <p id="transition-modal-description">Хотите записаться на это время?</p> */}
+
+                <div className={classes.buttons}>
+                  <Button variant="outlined" color="primary" style={{padding: '0.5rem 3rem'}} onClick={handleCloseAndSaveTime}>Да</Button>
+                  <Button variant="outlined" color="primary" style={{padding: '0.5rem 3rem'}} onClick={handleClose}>Нет</Button>
+                </div>
+                
+              </div>
+            </Fade>
+          </Modal>
         </Grid>
     </Grid>
   );

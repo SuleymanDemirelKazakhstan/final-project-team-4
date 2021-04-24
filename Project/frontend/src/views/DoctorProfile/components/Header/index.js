@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
+import React ,{useEffect,useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {
-  Grid,Typography
+  Grid
 } from '@material-ui/core';
 // import {useImage} from 'react-image'
 import {Img} from 'react-image'
@@ -29,9 +28,16 @@ const useStyles = makeStyles(() => ({
 
 
 const Header = props => {
-  const { className, ...rest } = props;
-  const classes = useStyles();
+  // const [ratingState, setRating] = useState(0);
 
+  // useEffect(() => {
+  //   console.log(props.header.rating,2)
+  //   setRating(parseFloat(props.header.rating))
+  // },[props.header.rating])
+
+  // const { className } = props;
+  const classes = useStyles();
+  
   const header_container = {
     paddingTop:'1rem',
     width:'auto',
@@ -45,9 +51,10 @@ const Header = props => {
     marginRight: 'auto',
     display: 'block',
   }
+
   const stars = {
     size: 45,
-    value: 3.5,
+    value:4,
     edit: false,
     isHalf: true,
     color: '#1963C6',
@@ -56,6 +63,10 @@ const Header = props => {
     halfIcon: <i className="fa fa-star-half-alt" />,
     filledIcon: <i className="fa fa-star" />,
   };
+  const starsContainer = {
+    display:'flex',
+    justifyContent: props.isDesktop ? 'start' : 'center'
+  }
 
 
   return (
@@ -71,12 +82,14 @@ const Header = props => {
 
         <div style={header_container}>
           <Grid container spacing={1}>
-              <Grid item md={12} xs={12}>
-                <ReactStars {...stars} />
+              <Grid item md={12} xs={12} style={starsContainer}>
+                <ReactStars {...stars}
+                //  value={ratingState}
+                 />
               </Grid>
 
               <Grid item md={12} xs={12}>
-                <h2 className ={classes.fio}>Даморова Ольга Владимировна</h2> 
+                <h2 className ={classes.fio}>{props.header.fio}</h2> 
               </Grid>
 
               <Grid item md={12} xs={12}>

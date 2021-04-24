@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 // import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {
-  Grid,Typography
+  Grid
 } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 
@@ -26,7 +26,7 @@ const useStyles = makeStyles(() => ({
 
 
 const Description = props => {
-  const { className, ...rest } = props;
+  // const { className } = props;
   const classes = useStyles();
 
   const marginTop = {
@@ -68,7 +68,7 @@ const Description = props => {
                 </Grid> 
                 <Divider orientation="vertical" flexItem className={classes.div} style={smallDivider} />
                 <Grid item md={12} xs={6} >
-                    <p style={text2} className={classes.marginP}>5 лет</p>
+                    <p style={text2} className={classes.marginP}>{props.description.experience}</p>
                 </Grid> 
             </Grid> 
 
@@ -78,7 +78,7 @@ const Description = props => {
                 </Grid> 
                 <Divider orientation="vertical" flexItem className={classes.div} style={smallDivider} />
                 <Grid item md={12} xs={6}>
-                    <p style={text2} className={classes.marginP}>АО «Медицинский Университет Астана» по специальности «Педиатрия»</p>
+                    <p style={text2} className={classes.marginP}>{props.description.education}</p>
                 </Grid> 
             </Grid>
 
@@ -92,7 +92,7 @@ const Description = props => {
             </Grid>
 
             <Grid item md={12} xs={12}>
-            <p style={rightBlock2} className={classes.marginP}>Амбулаторное наблюдение и лечение детей от рождения до 15 лет, включая детей с болезнями органов дыхания (бронхиты, ОРЗ, аденоидит, ангины), мочевыделительной системы; паразитарные инвазии; дерматологические заболевания; аутоиммунные нарушения; плановые профилактические осмотры здоровых детей (Check-up), патронаж новорожденного включая выезд на дом по патронажу в течении первого месяца после выписки с роддома.</p> 
+            <p style={rightBlock2} className={classes.marginP}>{props.description.description}</p>
             </Grid>
         </Grid>
     </Grid>

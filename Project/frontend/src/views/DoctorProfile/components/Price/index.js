@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {
   Grid
 } from '@material-ui/core';
-
-const nasiba;
 
 const useStyles = makeStyles(() => ({
   root: {} ,
@@ -29,7 +27,7 @@ const useStyles = makeStyles(() => ({
 
 
 const Price = props => {
-  const { className, ...rest } = props;
+  // const { className } = props;
   const classes = useStyles();
   const marginTop = {
     marginTop:props.isDesktop ? '4rem' : '2rem'
@@ -47,13 +45,13 @@ const Price = props => {
 
         <Grid container justify='space-around' >
             <Grid item md={5} xs={12} className={classes.price} >
-                <p className={classes.p}>7 000 тг</p>
+                <p className={classes.p}>{props.price.first_visit_cost} тг</p>
                 <p>Первичный прием</p>
             </Grid>
 
             <Grid item md={5} xs={12} className={classes.price}>
-                <p className={classes.p}>6 000 тг</p>
-                <p>Первичный прием</p>
+                <p className={classes.p}>{props.price.second_visit_cost} тг</p>
+                <p>Вторичный прием</p>
             </Grid>
 
         </Grid>
