@@ -6,6 +6,10 @@ const
   bodyParser = require('body-parser'),
   app = express().use(bodyParser.json()); // creates express http server
 
+ var cors = require('cors')
+
+ app.use(cors())
+
 
 const mongoose = require("mongoose");
 // const axios = require('axios');

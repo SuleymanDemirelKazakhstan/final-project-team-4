@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import {
@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
 
 
 const Address = props => {
-  const { className, ...rest } = props;
+  // const { className } = props;
   const classes = useStyles();
   const marginTop = {
       padding:'3rem'

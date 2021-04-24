@@ -4,28 +4,27 @@ import { Switch, Redirect } from 'react-router-dom';
 import { RouteWithLayout } from './components';
 
 import { DoctorProfile as DoctorLayout} from './layouts';
-
-// import { Main as MainLayout, Minimal as MinimalLayout } from './layouts';
+// import { Login as LoginLayout} from './layouts';
+import { Main as MainLayout } from './layouts';
+// import { Minimal as MinimalLayout } from './layouts';
 
 import {
-//   Dashboard as DashboardView,
   DoctorProfile as DoctorProfileView,
-//   UserList as UserListView,
-//   SignUp as SignUpView,
-//   SignIn as SignInView,
-//   NotFound as NotFoundView,
+  Login as LoginView,
+  DoctorAdmin as DoctorCabinetView
+  // NotFound as NotFoundView,
 } from './views';
 
 const Routes = (props) => {
   return (
     <Switch>
       <Redirect exact from="/" to="/doctor" />
-      {/* <RouteWithLayout
-        component={DashboardView}
+      <RouteWithLayout
+        component={MainLayout}
         exact
-        layout={MainLayout}
-        path="/dashboard"
-      /> */}
+        layout={LoginView}
+        path="/login"
+      />
       <RouteWithLayout
         component={DoctorProfileView}
         exact
@@ -33,26 +32,20 @@ const Routes = (props) => {
         isDesktop = {props.isDesktop}
         path="/doctor/:id"
       />
-
+      <RouteWithLayout
+        component={MainLayout}
+        exact
+        isDesktop = {props.isDesktop}
+        layout={DoctorCabinetView}
+        path="/cabinet/:id"
+      />
       {/* <RouteWithLayout
-        component={SignUpView}
-        exact
-        layout={MinimalLayout}
-        path="/sign-up"
-      />
-      <RouteWithLayout
-        component={SignInView}
-        exact
-        layout={MinimalLayout}
-        path="/sign-in"
-      />
-      <RouteWithLayout
         component={NotFoundView}
         exact
         layout={MinimalLayout}
         path="/not-found"
-      /> */}
-      {/* <Redirect to="/not-found" /> */}
+      />
+      <Redirect to="/not-found" />  */}
     </Switch>
   );
 };

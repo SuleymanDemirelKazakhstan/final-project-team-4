@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DoctorProfile = props => {
+const Main = props => {
   const { children } = props;
   const classes = useStyles();
   const root = {
@@ -31,8 +31,6 @@ const DoctorProfile = props => {
     <div
       style = {root}
     >     
-        <div><h3 style={headerTitle}>ПРОФИЛЬ ВРАЧА</h3></div>
-
         <main className={classes.content}>
             {children}
         </main>
@@ -42,8 +40,8 @@ const DoctorProfile = props => {
   );
 };
 
-DoctorProfile.propTypes = {
+Main.propTypes = {
   children: PropTypes.node
 };
 
-export default DoctorProfile;
+export default Main;

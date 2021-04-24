@@ -15,4 +15,6 @@ export default styled.div`
   border-radius:0.5rem;
   text-transform:uppercase;
   text-align:center;
+  cursor:pointer;
+  outline:none;
 `;
