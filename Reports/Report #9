@@ -11,7 +11,7 @@ And now the telegram bot functionality is completely suitable for us and we deci
  
 Valieva Nasiba: Created a database and collections in Mongo Atlas for everyone.
 
-Tazhibaeva Aidana: completed the translation of the symptom database, completed the doctors and specializations in our database
+Tazhibayeva Aidana: completed the translation of the symptom database, completed the doctors and specializations in our database
  
 Dussenova Anel: created the "Symptom" Entity in the dialogue flow, filled in the data of symptoms and 
 their synonyms to train the dialogue flow to correctly recognize symptoms
