@@ -1,0 +1,15 @@
+Report of Week#8
+
+
+We faced the difficulty of correctly posing questions to clarify symptoms in a person and decided that the bot's telegram
+functionality would not allow us to do what we had in mind. Therefore, we decided that we will make a web bot.
+
+Dikanbayeva Assura: Designed the bot https://www.figma.com/file/iI9kcTh32RS7mJOG6mv6MR/Diploma-project-DocBot?node-id=0%3A1
+ 
+Sultan Aitkali, Dyussenova Anel and Valiyeva Nassiba:
+We studied a database of symptoms and diseases. Also divided the symptoms into groups in order to minimize the number of questions.
+For example, so that the bot does not display a huge list of symptoms to choose from at the first question,
+we decided that with each question we should narrow the range of probable symptoms to choose from.
+   
+Tazhibayeva Aidana: started translating the database with symptoms and diseases into Russian:
+https://docs.google.com/spreadsheets/d/1HfnHy6gedmfVr7wm-WeB5oyROY-BEItgYQd7MwRKtyI/edit?usp=sharing
