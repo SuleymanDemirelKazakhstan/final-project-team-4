@@ -24,7 +24,7 @@ const patientSchema = new Schema({
     },
     patronymic:{
         type:String,
-        required:true,
+        // required:true,
         // unique:true,
         // trim:true,
     },
@@ -52,6 +52,13 @@ const patientSchema = new Schema({
     },
     allergy:{
         type:String, 
+        // required:true,
+        // unique:true,
+        // trim:true,
+    },
+    all_ok:{
+        type:Boolean, 
+        default: false
         // required:true,
         // unique:true,
         // trim:true,

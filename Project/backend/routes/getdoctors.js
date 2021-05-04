@@ -1,16 +1,24 @@
 const router = require('express').Router();
 const url = require('url');
 let Doctor = require('../models/doctor.model');
-
+let Spec = require('../models/specialization.model');
+let Patient = require('../models/patient.model');
 
 
 router.get("/", async (req, res) => {
     try {
-        let doctor = await Doctor.findOne({id:parseInt(req.query.doctor_id)})
-        console.log(doctor);
+        let doctor = await Doctor.findOne({id:parseInt(req.query.doctor)})
+        let patient = await Patient.findOne({chat_id:parseInt(req.query.user)})
+        let spec = []
 
-        res.send(doctor);
+        for (var i = 0; i < doctor.specialization_ids.length; i++) {
+          let s = await Spec.find({id: parseInt(doctor.specialization_ids[i])});
+          spec.push(s);
+        }
+
+        res.send({doctor:doctor,spec:spec, user: patient});
       } catch (error) {
+        console.log('err')
         res.send(error);
       }
 })

@@ -28,14 +28,6 @@
 
 // });
 
-// MedBot.on('text', async(ctx) => {
-    
-//     switch(order_db.step){
-//     }
-// });
-
-
-
 
 
 

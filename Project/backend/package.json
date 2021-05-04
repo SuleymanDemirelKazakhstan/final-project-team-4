@@ -17,6 +17,8 @@
     "decision-tree": "^0.3.7",
     "dialogflow-fulfillment": "^0.6.1",
     "express": "^4.17.1",
-    "mongoose": "^5.12.3"
+    "mongoose": "^5.12.3",
+    "python-shell": "^3.0.0",
+    "telegraf": "^4.3.0"
   }
 }

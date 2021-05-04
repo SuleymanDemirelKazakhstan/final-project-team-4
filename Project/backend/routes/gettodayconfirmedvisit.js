@@ -1,0 +1,29 @@
+const router = require('express').Router();
+let Visit = require('../models/visit.model');
+
+
+
+router.get("/", async (req, res) => {
+    try {
+      console.log("hii")
+
+      var start = new Date();
+      start.setHours(0,0,0,0);
+      
+      var end = new Date();
+      end.setHours(23,59,59,999);
+
+
+      // date_visit: {$gte: start, $lt: end} , 
+
+      let today_visit = await Visit.find({date_visit: {$gte: start, $lt: end} , doctor_id: parseInt(req.query.doctor) , status: "confirmed"})
+      console.log(today_visit)
+
+      res.send(today_visit);
+    } catch (error) {
+      res.send(error);
+    }
+});
+
+
+module.exports = router
