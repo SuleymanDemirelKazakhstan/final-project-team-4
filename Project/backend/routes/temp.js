@@ -327,20 +327,43 @@ router.post('/', express.json(), (req, res)=>{
       var answer = ""
       
       if (prev_intent == "namesurname"){
-        if(patient.all_ok){
+        if(patient.all_ok==1){
           let name = "";
+          let check_undef = false;
           if(patient.patronymic){
             name = patient.lastName + " " + patient.firstName + " " + patient.patronymic
           }else{
             name = patient.lastName + " " + patient.firstName
           }
-          let age = patient.age
-          let gender = patient.sex
-          let phone = patient.phoneNumber;
+          let age;
+          if(patient.age){
+            age = patient.age
+          }else{
+            age = "Возраст не указан."
+            check_undef = true
+          }
+          let phone;
+          if(patient.phoneNumber){
+            phone = patient.phoneNumber;
+          }else{
+            phone = "Телефон не указан."
+            check_undef = true
+          }
+          let gender;
+          if(patient.sex){
+            gender = patient.sex
+          }else{
+            gender = "Пол не указан."
+            check_undef = true
+          }
           await patient.save();
 
+          let undef = "";
+          if(check_undef){
+            undef = "\n_Пожалуйста, введите все данные_"
+          }
           answer = {
-            "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}`,
+            "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}${undef}`,
             "reply_markup": {
               "inline_keyboard": [
                 [
@@ -375,22 +398,39 @@ router.post('/', express.json(), (req, res)=>{
         }
       }
       else if (prev_intent == "age-followup"){
-        if(patient.all_ok){
+        if(patient.all_ok==1){
           var age = agent.context.contexts["age-followup"].parameters['age'].amount;
           var unit = agent.context.contexts["age-followup"].parameters['age'].unit;
           let name = "";
+          let check_undef = false;
           if(patient.patronymic){
             name = patient.lastName + " " + patient.firstName + " " + patient.patronymic
           }else{
             name = patient.lastName + " " + patient.firstName
           }
-          let gender = patient.sex
-          let phone = patient.phoneNumber;
+          let phone;
+          if(patient.phoneNumber){
+            phone = patient.phoneNumber;
+          }else{
+            phone = "Телефон не указан."
+            check_undef = true
+          }
+          let gender;
+          if(patient.sex){
+            gender = patient.sex
+          }else{
+            gender = "Пол не указан."
+            check_undef = true
+          }
           patient.age = parseInt(age);
           await patient.save();
 
+          let undef = "";
+          if(check_undef){
+            undef = "\n_Пожалуйста, введите все данные_"
+          }
           answer = {
-            "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}`,
+            "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}${undef}`,
             "reply_markup": {
               "inline_keyboard": [
                 [
@@ -450,22 +490,40 @@ router.post('/', express.json(), (req, res)=>{
       }
       else if (prev_intent == "gender-followup"){
 
-        if(patient.all_ok){
+        if(patient.all_ok==1){
           var gender = agent.context.contexts["gender-followup"].parameters.gender;
           
           let name = "";
+          let check_undef = false;
           if(patient.patronymic){
             name = patient.lastName + " " + patient.firstName + " " + patient.patronymic
           }else{
             name = patient.lastName + " " + patient.firstName
           }
-          let age = patient.age
-          let phone = patient.phoneNumber;
+          let age;
+          if(patient.age){
+            age = patient.age
+          }else{
+            age = "Возраст не указан."
+            check_undef = true
+          }
+          let phone;
+          if(patient.phoneNumber){
+            phone = patient.phoneNumber;
+          }else{
+            phone = "Телефон не указан."
+            check_undef = true
+          }
           patient.sex = gender;
           await patient.save();
 
+          let undef = "";
+          if(check_undef){
+            undef = "\n_Пожалуйста, введите все данные_"
+          }
+
           answer = {
-            "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}`,
+            "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}${undef}`,
             "reply_markup": {
               "inline_keyboard": [
                 [
@@ -506,25 +564,42 @@ router.post('/', express.json(), (req, res)=>{
       }
       else if (prev_intent == "phone-followup"){
         var phone = agent.context.contexts["phone-followup"].parameters["phone-number"];
-        patient.all_ok = true;
+        patient.all_ok = 1;
 
-        // let patient = await Patient.findOne({chat_id: id})
         let name = "";
-        if(patient.patronymic){
-          name = patient.lastName + " " + patient.firstName + " " + patient.patronymic
-        }else{
-          name = patient.lastName + " " + patient.firstName
-        }
-        let age = patient.age
-        let gender = patient.sex
+        let check_undef = false;
+          if(patient.patronymic){
+            name = patient.lastName + " " + patient.firstName + " " + patient.patronymic
+          }else{
+            name = patient.lastName + " " + patient.firstName
+          }
+          let age;
+          if(patient.age){
+            age = patient.age
+          }else{
+            age = "Возраст не указан."
+            check_undef = true
+          }
+          let gender;
+          if(patient.sex){
+            gender = patient.sex
+          }else{
+            gender = "Пол не указан."
+            check_undef = true
+          }
 
 
 
         patient.phoneNumber = phone;
         await patient.save();
 
+        let undef = "";
+        if(check_undef){
+          undef = "\n_Пожалуйста, введите все данные_"
+        }
+
         answer = {
-          "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}`,
+          "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}${undef}`,
           "reply_markup": {
             "inline_keyboard": [
               [
@@ -697,7 +772,7 @@ router.post('/', express.json(), (req, res)=>{
 
 
       } 
-      else if (prev_intent == "defaultwelcomeintent-followup" || patient.all_ok || all-followup) {
+      else if (prev_intent == "defaultwelcomeintent-followup" || patient.all_ok==1 || all-followup) {
         answer = {
           "text": "Чем я могу Вам помочь?",
           "reply_markup": {
@@ -843,18 +918,42 @@ router.post('/', express.json(), (req, res)=>{
       if (patient){
 
         
-        patient.all_ok = true;
+        patient.all_ok = 1;
         let name = "";
+        let check_undef = false;
         if(patient.patronymic){
           name = patient.lastName + " " + patient.firstName + " " + patient.patronymic
         }else{
           name = patient.lastName + " " + patient.firstName
         }
-        const age = patient.age
-        const sex = patient.sex 
-        const phone = patient.phoneNumber
+        let age;
+        if(patient.age){
+          age = patient.age
+        }else{
+          age = "Возраст не указан."
+          check_undef = true;
+        }
+        let phone;
+        if(patient.phoneNumber){
+          phone = patient.phoneNumber;
+        }else{
+          phone = "Телефон не указан."
+          check_undef = true;
+        }
+        let gender;
+        if(patient.sex){
+          gender = patient.sex
+        }else{
+          gender = "Пол не указан."
+          check_undef = true;
+        }
+
+        let undef = "";
+        if(check_undef){
+          undef = "\n_Пожалуйста, введите все данные_"
+        }
         answer = {
-          "text": `Здравствуйте! У меня сохранились Ваши данные с прошлого раза как Вы мне писали. Правильно: \n*Имя:* ${name} \n*Возраст:* ${age}\n*Пол:* ${sex}\n*Телефон:* ${phone}?`,
+          "text": `Здравствуйте! У меня сохранились Ваши данные с прошлого раза как Вы мне писали. Правильно: \n*Имя:* ${name} \n*Возраст:* ${age}\n*Пол:* ${gender}\n*Телефон:* ${phone}${undef}`,
           "reply_markup": {
             "inline_keyboard": [
               [
@@ -1004,13 +1103,32 @@ router.post('/', express.json(), (req, res)=>{
           "parse_mode": 'Markdown'
         };
         agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
-      
       }
-
-      
-
     }
 
+    async function fallback(agent){
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+      
+      let answer = 'Можете, пожалуйста, выразить свою мысль по-другому.'
+      let patient = await Patient.findOne({chat_id: id})
+      
+      if (patient.all_ok==2){
+        let visit = await Visit.findOne({user_id: id, status: "confirmed"})
+        patient.all_ok = 1
+        visit.patient_comment = agent.query; 
+        answer = "Мы вас записали. Спасибо за доверение к нам"
+        patient.save()
+        visit.save()
+        
+      }
+
+      agent.add(answer)
+    }
 
     var intentMap = new Map();
     intentMap.set('NameSurname', name )
@@ -1024,11 +1142,8 @@ router.post('/', express.json(), (req, res)=>{
     intentMap.set('DoctorListName', docname ) 
     intentMap.set('History', history ) 
     intentMap.set('Age', age ) 
-
-
-
+    intentMap.set('DefaultFallbackIntent', fallback ) 
     
-
 
     agent.handleRequest(intentMap);
   
@@ -1037,24 +1152,3 @@ router.post('/', express.json(), (req, res)=>{
 });
 
 module.exports = router;
-
-
-
-
-
-
-
-// users.forEach((user)=>{
-//   NashaBot.telegram.sendMessage(user.chat_id,
-//       '<b>Номер заказа: </b> <i>'+lead.items[0].id+'</i>\
-//       \n<b>Имя: </b> <i>'+contact[0].name +'</i>\
-//       \n<b>Сумма: </b> <i>'+ lead.items[0].sale + '</i>\
-//       \n<b>Заказ: </b> <i>'+ naimen + '</i>\
-//       \n<b>Номер телефона: </b> <i>'+nomer + '</i>\
-//       \n<b>Адрес: </b> <i>'+ addres + '</i>\
-//       \n<b>Примечание: </b>'+ dop
-//       ,
-//   markup)
-// })
-
-

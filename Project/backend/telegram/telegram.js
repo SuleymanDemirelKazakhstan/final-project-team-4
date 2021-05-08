@@ -1,38 +1,20 @@
-// const { Telegraf } = require("telegraf");
-// const config = require("../config/default");
+const { Telegraf } = require("telegraf");
+const config = require("../config/default");
+const Patient = require('../models/patient.model');
 
-// // const UserModel = require("../models/user_doors");
+let MedBot = new Telegraf("1660503992:AAFS8OT8RFktrRB9byz5i6LhFZltmVErdEo");
 
-// let token = " TOKEN ";
-// let MedBot = new Telegraf(token);
+MedBot.on('text', async(ctx) => {
+    let patient = await Patient.findOne({chat_id: id})
+    if(patient.all_ok == 2){
+        MedBot.telegram.sendMessage(ctx.chat.id, `Мы вас записали.`);
+        patient.all_ok = 1
+        patient.patient_comment = ctx.message.text
+    }
+});
 
-// MedBot.start(async (ctx) => {  
-//     console.log('bot start pressed by: '+ctx.from.username);
-//     let user = await UserModel.findOne({ chat_id: ctx.chat.id });
-   
-//     if(!user){
-//         const newUser = {
-//             chat_id: ctx.chat.id,
-//             username: ctx.from.username
-//         };
+MedBot.launch()
 
-//         user = new UserModel(newUser);
-//         user.save((err, saved) => {
-//             if(err) console.log(err, ' ,error in telegram/index.js');
-//             if (saved) console.log('user saved');
-//         });
-
-//     }
-
-//     MedBot.telegram.sendMessage(ctx.chat.id, 'Здравствуйте, я MeБот, который будет отправлять вам информацию об успешно завершенных лидах Дверей-невидимок.');
-
-// });
-
-
-
-
-// MedBot.launch()
-
-// module.exports = {
-//     MedBot
-// };
+module.exports = {
+    MedBot
+};

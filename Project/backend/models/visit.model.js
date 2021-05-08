@@ -23,6 +23,7 @@ const visitSchema = new Schema({
     symptoms:{ type : Array , "default" : [] },
     predicted_diseases:{ type : Array , "default" : [] },
     list_of_analysis:{ type : Array , "default" : [] },
+    patient_comment:{type:String},
     comment_befor_visit:{
         type:String,
         // required:true,

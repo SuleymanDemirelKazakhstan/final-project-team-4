@@ -57,8 +57,8 @@ const patientSchema = new Schema({
         // trim:true,
     },
     all_ok:{
-        type:Boolean, 
-        default: false
+        type: Number, 
+        default: 0
         // required:true,
         // unique:true,
         // trim:true,
