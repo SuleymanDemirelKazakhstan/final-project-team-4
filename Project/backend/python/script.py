@@ -18,4 +18,4 @@ classifer = joblib.load("/home/anel/Desktop/final-project-team-4/Project/backend
 
 res = classifer.predict(z.reshape(1,404))
 
-print('Hello from python', res)
+print(res[0])

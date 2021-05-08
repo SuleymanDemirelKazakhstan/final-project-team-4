@@ -5,7 +5,6 @@ let Visit = require('../models/visit.model');
 
 router.get("/", async (req, res) => {
     try {
-      console.log("hii")
 
       var start = new Date();
       start.setHours(0,0,0,0);

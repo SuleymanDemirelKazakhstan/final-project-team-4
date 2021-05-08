@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 const dfff = require('dialogflow-fulfillment');
@@ -9,6 +8,7 @@ const Visit = require('../models/visit.model');
 const {spawn} = require('child_process');
 const {PythonShell} =require('python-shell');
 const Disease = require('../models/disease.model');
+
 
 
 router.get("/", async (req, res) => {
@@ -29,30 +29,70 @@ router.post('/', express.json(), (req, res)=>{
     console.log(prev_intent)
 
     async function name(agent){
-        var name = agent.query;
-        console.log(name)
-        let patient = await Patient.findOne({chat_id: agent.originalRequest.payload.data.from.id})
-  
-        if (patient){
-          patient.firstName = name.split(' ')[1],
-          patient.lastName = name.split(' ')[0],
-          patient.patronymic = name.split(' ')[2]
-          await patient.save();
-        }else{
-          const new_patient = new Patient({
-            chat_id: agent.originalRequest.payload.data.from.id,
-            firstName: name.split(' ')[1],
-            lastName: name.split(' ')[0],
-            patronymic: name.split(' ')[2]
-          })
-          new_patient.save((err, saved) => {
-            if (err){
-              console.log(err)
-          }});
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+      var name = agent.query;
+      console.log(name)
+      let patient = await Patient.findOne({chat_id: id})
+
+      if (patient){
+        patient.firstName = name.split(' ')[1],
+        patient.lastName = name.split(' ')[0],
+        patient.patronymic = name.split(' ')[2]
+        await patient.save();
+      }else{
+        const new_patient = new Patient({
+          chat_id: id,
+          firstName: name.split(' ')[1],
+          lastName: name.split(' ')[0],
+          patronymic: name.split(' ')[2]
+        })
+        new_patient.save((err, saved) => {
+          if (err){
+            console.log(err)
+        }});
+      }
+      
+      const answer = {
+        "text": `${name}, правильно?`,
+        "reply_markup": {
+          "inline_keyboard": [
+            [
+              {
+                "text": "Да",
+                "callback_data": "Да"
+              }
+            ],
+            [
+              {
+                "text": "Нет",
+                "callback_data": "Нет"
+              }
+            ]
+          ]
         }
-        
-        const answer = {
-          "text": `${name}, правильно?`,
+      };
+      agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+      
+    }
+
+    function age(agent){
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+      var age = agent.parameters['age'].amount;
+      var unit = agent.parameters['age'].unit;
+      var answer;
+      if (unit == 'year'){
+        answer = {
+          "text": `${age} лет, правильно?`,
           "reply_markup": {
             "inline_keyboard": [
               [
@@ -70,86 +110,103 @@ router.post('/', express.json(), (req, res)=>{
             ]
           }
         };
-        agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
-      
+      }
+      if (unit == 'month'){
+        answer = {
+          "text": `${age} месяцев, правильно?`,
+          "reply_markup": {
+            "inline_keyboard": [
+              [
+                {
+                  "text": "Да",
+                  "callback_data": "Да"
+                }
+              ],
+              [
+                {
+                  "text": "Нет",
+                  "callback_data": "Нет"
+                }
+              ]
+            ]
+          }
+        };        
+      }
+      agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+
+
     }
-
-    function age(agent){
-        var age = agent.parameters['age'].amount;
-        var unit = agent.parameters['age'].unit;
-
-        console.log(age);
-        // agent.add(`Какой Ваш пол?`);
-
-    }
-
-    function gender(agent){
-        var gender = agent.parameters['age'].amount;
-  
-        console.log(gender);
-        // agent.add(``);
-
-    }
-
     
     function phone(agent){
-        var name = agent.contexts[0].parameters['person'][0].name;
-        var age = agent.contexts[1].parameters['age'].amount;
-        var unit = agent.contexts[1].parameters['age'].unit;
-        var gender = agent.contexts[2].parameters['Gender'];
-        var phone = agent.parameters['phone-number'];
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+      var name = agent.contexts[0].parameters['person'][0].name;
+      var age = agent.contexts[1].parameters['age'].amount;
+      var unit = agent.contexts[1].parameters['age'].unit;
+      var gender = agent.contexts[2].parameters['Gender'];
+      var phone = agent.parameters['phone-number'];
 
 
-  
-        console.log(name);
-        console.log(age);
-        console.log(unit);
-        console.log(gender);
-        console.log(phone);
 
-        const payload = {
-            "text": `Правильно ли введены данные:  \nИмя: ${name} \nВозраст: ${age} \nПол: ${gender} \nНомер телефона: ${phone}`,
-            "reply_markup": {
-              "inline_keyboard": [
-                [
-                  {
-                    "text": "Да",
-                    "callback_data": "Да"
-                  }
-                ],
-                [
-                  {
-                    "text": "Нет",
-                    "callback_data": "Нет"
-                  }
-                ]
+      console.log(name);
+      console.log(age);
+      console.log(unit);
+      console.log(gender);
+      console.log(phone);
+
+      const payload = {
+          "text": `Правильно ли введены данные:  \nИмя: ${name} \nВозраст: ${age} \nПол: ${gender} \nНомер телефона: ${phone}`,
+          "reply_markup": {
+            "inline_keyboard": [
+              [
+                {
+                  "text": "Да",
+                  "callback_data": "Да"
+                }
+              ],
+              [
+                {
+                  "text": "Нет",
+                  "callback_data": "Нет"
+                }
               ]
-            }
-          };
+            ]
+          }
+        };
 
 
-        agent.add(new dfff.Payload(agent.TELEGRAM , payload, {rawPayload: false, sendAsMessage: true}));
-     
+      agent.add(new dfff.Payload(agent.TELEGRAM , payload, {rawPayload: false, sendAsMessage: true}));
+    
 
-        const new_patient = new Patient({
-            firstName: name.split(' ')[1],
-            lastName: name.split(' ')[0],
-            sex: gender,
-            phoneNumber: phone,
-            age: age
-        })
+      const new_patient = new Patient({
+          firstName: name.split(' ')[1],
+          lastName: name.split(' ')[0],
+          sex: gender,
+          phoneNumber: phone,
+          age: age
+      })
 
-        new_patient.save((err, saved) => {
-          if (err){
-            console.log(err)
-        }
-        });
+      new_patient.save((err, saved) => {
+        if (err){
+          console.log(err)
+      }
+      });
 
 
     }
         
-
     async function spec(agent){
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+
       var spec = await Specialization.find({});
 
 
@@ -178,9 +235,14 @@ router.post('/', express.json(), (req, res)=>{
       
     }
 
-
-
     async function doctors(agent){
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+
       var spec = agent.parameters.Doctors;
 
       var spec_db = await Specialization.find({name: spec});
@@ -202,7 +264,7 @@ router.post('/', express.json(), (req, res)=>{
         let temp = [{
           "text": element.surname + " " + element.name,
           "callback_data": element.surname + " " + element.name,
-          "url": `https://c7811266f66f.ngrok.io/doctor/${element.id}/user/${agent.originalRequest.payload.data.from.id}`
+          "url": `https://f5f5afcd7275.ngrok.io/getdoctors/doctor/${element.id}/user/${id}`
         }];
 
         payload.reply_markup.inline_keyboard.push(temp);
@@ -212,9 +274,14 @@ router.post('/', express.json(), (req, res)=>{
       agent.add(new dfff.Payload(agent.TELEGRAM , payload, {rawPayload: false, sendAsMessage: true}));
     }
 
-
-
     async function symptoms(agent){
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+
       const symp = agent.parameters.symptom;
       
       var answer = "Я правильно понял, Вас волнует: ";
@@ -241,12 +308,20 @@ router.post('/', express.json(), (req, res)=>{
           ]
         }
       };
+
       agent.add(new dfff.Payload(agent.TELEGRAM ,payload , {rawPayload: false, sendAsMessage: true}));
     }
 
     async function yes(agent){
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+
       const prev_intent = Object.keys(agent.context.contexts)[0];
-      let patient = await Patient.findOne({chat_id: agent.originalRequest.payload.data.callback_query.from.id})
+      let patient = await Patient.findOne({chat_id: id})
         
       // console.log(prev_intent)
       var answer = ""
@@ -265,7 +340,7 @@ router.post('/', express.json(), (req, res)=>{
           await patient.save();
 
           answer = {
-            "text": `Все правильно: \nИмя: ${name} \nВозраст: ${age} \nПол: ${gender} \nТелефон: ${phone}`,
+            "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}`,
             "reply_markup": {
               "inline_keyboard": [
                 [
@@ -281,7 +356,8 @@ router.post('/', express.json(), (req, res)=>{
                   }
                 ]
               ]
-            }
+            },
+            "parse_mode": 'Markdown'
           };
           agent.context.set({
             'name':'all-followup',
@@ -314,7 +390,7 @@ router.post('/', express.json(), (req, res)=>{
           await patient.save();
 
           answer = {
-            "text": `Все правильно: \nИмя: ${name} \nВозраст: ${age} \nПол: ${gender} \nТелефон: ${phone}`,
+            "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}`,
             "reply_markup": {
               "inline_keyboard": [
                 [
@@ -330,7 +406,8 @@ router.post('/', express.json(), (req, res)=>{
                   }
                 ]
               ]
-            }
+            },
+            "parse_mode": 'Markdown'
           };
           agent.context.set({
             'name':'all-followup',
@@ -388,7 +465,7 @@ router.post('/', express.json(), (req, res)=>{
           await patient.save();
 
           answer = {
-            "text": `Все правильно: \nИмя: ${name} \nВозраст: ${age} \nПол: ${gender} \nТелефон: ${phone}`,
+            "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}`,
             "reply_markup": {
               "inline_keyboard": [
                 [
@@ -404,7 +481,8 @@ router.post('/', express.json(), (req, res)=>{
                   }
                 ]
               ]
-            }
+            },
+            "parse_mode": 'Markdown'
           };
           agent.context.set({
             'name':'all-followup',
@@ -430,7 +508,7 @@ router.post('/', express.json(), (req, res)=>{
         var phone = agent.context.contexts["phone-followup"].parameters["phone-number"];
         patient.all_ok = true;
 
-        // let patient = await Patient.findOne({chat_id: agent.originalRequest.payload.data.from.id})
+        // let patient = await Patient.findOne({chat_id: id})
         let name = "";
         if(patient.patronymic){
           name = patient.lastName + " " + patient.firstName + " " + patient.patronymic
@@ -446,7 +524,7 @@ router.post('/', express.json(), (req, res)=>{
         await patient.save();
 
         answer = {
-          "text": `Все правильно: \nИмя: ${name} \nВозраст: ${age} \nПол: ${gender} \nТелефон: ${phone}`,
+          "text": `Все правильно: \n*Имя:* ${name} \n*Возраст:* ${age} \n*Пол:* ${gender} \n*Телефон:* ${phone}`,
           "reply_markup": {
             "inline_keyboard": [
               [
@@ -462,7 +540,8 @@ router.post('/', express.json(), (req, res)=>{
                 }
               ]
             ]
-          }
+          },
+          "parse_mode": 'Markdown'
         };
         agent.context.set({
           'name':'all-followup',
@@ -485,18 +564,85 @@ router.post('/', express.json(), (req, res)=>{
           args: symp //An argument which can be accessed in the script using sys.argv[1]
         };
       
-        PythonShell.run('script.py', options, async function (err, result){
-          if (err) throw err;
-          diseases = result.toString();
-          console.log('result: ', result.toString());
-          // var diseases_db = await Disease.find({name_en: diseases});
-          var spec_db;
-          for(let i = 0; i<diseases_db.specialization_ids.length-1; i++){
-            s = await Specialization.find({id: diseases_db.specialization_ids[i]});
-            spec_db.push(s)
-          }
-          const answer = `По тем симптомам, что Вы нам дали, алгоритм предпологает что у Вас может быть: ${dataToSend}.  Доктора:.`
+        // PythonShell.run('script.py', options, async function (err, result){
+        //   if (err) throw err;
+        //   diseases = result.toString();
+        //   console.log('result: ', result.toString());
+        //   agent.add('Подождите еще одну секунду')
+
+        //   //get diseas from db by name_en
+        //   // var diseases_db = await Disease.find({name_en: diseases});
+
+        //   //get diseas specializations and add it to spec_db(array)
+        //   var spec_db;
+        //   // for(let i = 0; i<diseases_db.specialization_ids.length-1; i++){
+        //   //   s = await Specialization.find({id: diseases_db.specialization_ids[i]});
+        //   //   spec_db.push(s)
+        //   // }
+        //   spec_db = [1, 2]
           
+        //   const answer = `По тем симптомам, что Вы нам дали, алгоритм предпологает что у Вас может быть: ${diseases}.  Доктора:`
+        //   const payload = {
+        //     "text": answer,
+        //     "reply_markup": {
+        //       "inline_keyboard": [
+        //       ]
+        //     }
+        //   };
+        //   //for loop over specializations 
+        //   for(let i = 0; i<spec_db.length; i++){
+        //     agent.add('Подождите еще и еще одну секунду')
+
+        //     // var doc = await Doctor.find({ specialization_ids: spec_db[i].id.toString()});
+        //     var doc = await Doctor.find({ specialization_ids: spec_db[i].toString()});
+            
+        //     //for loop over doctors of specialization[i]
+        //     doc.forEach(async function(element) 
+        //     { 
+        //       let temp = [{
+        //         "text": element.surname + " " + element.name,
+        //         "callback_data": element.surname + " " + element.name,
+        //         "url": `https://f5f5afcd7275.ngrok.io/getdoctors/doctor/${element.id}/user/${id}`
+        //       }];
+        //       payload.reply_markup.inline_keyboard.push(temp);
+        //     });
+        //   }
+        //   agent.add(new dfff.Payload(agent.TELEGRAM , payload1, {rawPayload: false, sendAsMessage: true}));
+        //   agent.add('Подождите еще и еще и еще одну секунду')
+        //   console.log('hii blyat')
+        // });
+
+
+        const { success, err = '', results } = await new Promise(async (resolve, reject) => {
+          PythonShell.run('script.py', options, function(
+            err,
+            results
+          ) {
+            if (err) {
+              logger.error(err, '[ config - runManufacturingTest() ]');
+              reject({ success: false, err });
+            }
+            resolve({ success: true, results });
+          });
+      
+          
+        });
+
+        if (success) {
+          console.log('result: ', results.toString());
+
+          //get diseas from db by name_en
+          // var diseases_db = await Disease.find({name_en: diseases});
+
+          //get diseas specializations and add it to spec_db(array)
+          var spec_db;
+          // for(let i = 0; i<diseases_db.specialization_ids.length-1; i++){
+          //   s = await Specialization.find({id: diseases_db.specialization_ids[i]});
+          //   spec_db.push(s)
+          // }
+          spec_db = [1, 2]
+          
+          const answer = `По тем симптомам, что Вы нам дали, алгоритм предпологает что у Вас может быть: ${results.toString()}.\nДоктора:`
           const payload = {
             "text": answer,
             "reply_markup": {
@@ -504,34 +650,52 @@ router.post('/', express.json(), (req, res)=>{
               ]
             }
           };
-          // var spec_db = await Specialization.find({id: spec});
-          for(let i = 0; i<spec_db.length-1; i++){
-            var doc = await Doctor.find({ specialization_ids: spec_db[i].id.toString()});
-            
-            
 
-            doc.forEach(async function(element) 
+          
+          let docs = [];
+
+          //for loop over specializations 
+          for(let i = 0; i<spec_db.length; i++){
+
+            // var doc = await Doctor.find({ specialization_ids: spec_db[i].id.toString()});
+            var doc = await Doctor.find({ specialization_ids: spec_db[i].toString()});
+            docs.push(doc)
+            
+          }
+          var merged = [].concat.apply([], docs);
+
+          // Declare a new array
+          let fin_docs = [];
+              
+          // Declare an empty object
+          let uniqueObject = {};
+          // Loop for the array elements
+          for (let i in merged) {
+              // Extract the title
+              objTitle = merged[i]['id'];
+              // Use the title as the index
+              uniqueObject[objTitle] = merged[i];
+          }
+          // Loop to push unique object into array
+          for (i in uniqueObject) {
+            fin_docs.push(uniqueObject[i]);
+          }
+
+          //for loop over doctors of specialization[i]
+          fin_docs.forEach(async function(element) 
             { 
-
               let temp = [{
                 "text": element.surname + " " + element.name,
                 "callback_data": element.surname + " " + element.name,
-                "url": `https://c7811266f66f.ngrok.io/doctor/${element.id}/user/${agent.originalRequest.payload.data.from.id}`
+                "url": `https://f5f5afcd7275.ngrok.io/getdoctors/doctor/${element.id}/user/${id}`
               }];
-
               payload.reply_markup.inline_keyboard.push(temp);
             });
-          }
-          // var doc = await Doctor.find({ specialization_ids: spec_db[0].id.toString() });
-          
-
-          
-
 
           agent.add(new dfff.Payload(agent.TELEGRAM , payload, {rawPayload: false, sendAsMessage: true}));
-        
-          agent.add(answer);
-        });
+        }
+
+
       } 
       else if (prev_intent == "defaultwelcomeintent-followup" || patient.all_ok || all-followup) {
         answer = {
@@ -567,6 +731,13 @@ router.post('/', express.json(), (req, res)=>{
 
     
     async function no(agent){
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+
       const prev_intent = Object.keys(agent.context.contexts)[0];
       console.log(prev_intent)
       var answer = ""
@@ -659,7 +830,14 @@ router.post('/', express.json(), (req, res)=>{
 
 
     async function welcome(agent){
-      let patient = await Patient.findOne({chat_id: agent.originalRequest.payload.data.from.id})
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+
+      let patient = await Patient.findOne({chat_id: id})
   
       let answer  = "";
       if (patient){
@@ -676,7 +854,7 @@ router.post('/', express.json(), (req, res)=>{
         const sex = patient.sex 
         const phone = patient.phoneNumber
         answer = {
-          "text": `Здравствуйте! У меня сохранились Ваши данные с прошлого раза как Вы мне писали. Правильно: \nИмя: ${name} \nВозраст: ${age}\nПол: ${sex}\nТелефон: ${phone}?`,
+          "text": `Здравствуйте! У меня сохранились Ваши данные с прошлого раза как Вы мне писали. Правильно: \n*Имя:* ${name} \n*Возраст:* ${age}\n*Пол:* ${sex}\n*Телефон:* ${phone}?`,
           "reply_markup": {
             "inline_keyboard": [
               [
@@ -692,7 +870,8 @@ router.post('/', express.json(), (req, res)=>{
                 }
               ]
             ]
-          }
+          },
+          "parse_mode": 'Markdown'
         };
         agent.context.set({
           'name':'all-followup',
@@ -712,6 +891,13 @@ router.post('/', express.json(), (req, res)=>{
 
 
     async function docname(agent){
+      let id;
+      if (agent.originalRequest.payload.data.callback_query){
+        id = agent.originalRequest.payload.data.callback_query.from.id
+      }else{
+        id = agent.originalRequest.payload.data.from.id;
+      }
+
       const doc = agent.query;
       let doctor = await Doctor.findOne({name: doc.split(" ")[1], surname: doc.split(" ")[0]})
   
@@ -735,7 +921,7 @@ router.post('/', express.json(), (req, res)=>{
         for (var i = 0; i < visit.length; i++) {
           let doctor = await Doctor.findOne({id: visit[i].doctor_id})
           let doc_name = doctor.surname + " " + doctor.name + " " + doctor.patronymic
-          let date = visit[i].date
+          let date = visit[i].date_visit
           let symptoms = ''
           let analysis = ''
           let diseases = ''
@@ -753,44 +939,75 @@ router.post('/', express.json(), (req, res)=>{
             diseases = diseases + e + " "
           });
 
-          answer = answer + `\n${i+1}. Доктор: ${doc_name}\nДата приема: ${date}\nСимптомы: ${symptoms}\nПредиетед дезис бай телегармбот: ${diseases}\nАнализы: ${analysis}\nКомментарий до визита: ${cbv}\nКомментарий после визита: ${cav}\nРецепт: ${recept}`
+          
+          answer = answer + `\n${i+1}. *Доктор:* ${doc_name}\n*Дата приема:* ${date}\n*Симптомы:* ${symptoms}\n*Предиетед дезис бай телегармбот:* ${diseases}\n*Анализы:* ${analysis}\n*Комментарий до визита:* ${cbv}\n*Комментарий после визита:* ${cav}\n*Рецепт:* ${recept}\n`
           
         }
-        agent.add(answer);
+        answer = {
+          "text": `${answer} \n\n*Чем я могу Вам помочь?*`,
+          "reply_markup": {
+            "inline_keyboard": [
+              [
+                {
+                  "text": "Симптомы",
+                  "callback_data": "Симптомы"
+                }
+              ],
+              [
+                {
+                  "text": "Список врачей",
+                  "callback_data": "Список врачей"
+                }
+              ],
+              [
+                {
+                  "text": "История",
+                  "callback_data": "История"
+                }
+              ]
+            ]
+          },
+          "parse_mode": 'Markdown'
+        };
+        agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+      
+        
 
         
       }else{
         let answer = "Нет истории"
         agent.add(answer);
+        answer = {
+          "text": `*Чем я могу Вам помочь?*`,
+          "reply_markup": {
+            "inline_keyboard": [
+              [
+                {
+                  "text": "Симптомы",
+                  "callback_data": "Симптомы"
+                }
+              ],
+              [
+                {
+                  "text": "Список врачей",
+                  "callback_data": "Список врачей"
+                }
+              ],
+              [
+                {
+                  "text": "История",
+                  "callback_data": "История"
+                }
+              ]
+            ]
+          },
+          "parse_mode": 'Markdown'
+        };
+        agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+      
       }
 
-      answer = {
-        "text": "Чем я могу Вам помочь?",
-        "reply_markup": {
-          "inline_keyboard": [
-            [
-              {
-                "text": "Симптомы",
-                "callback_data": "Симптомы"
-              }
-            ],
-            [
-              {
-                "text": "Список врачей",
-                "callback_data": "Список врачей"
-              }
-            ],
-            [
-              {
-                "text": "История",
-                "callback_data": "История"
-              }
-            ]
-          ]
-        }
-      };
-      agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
-    
+      
 
     }
 
@@ -806,6 +1023,8 @@ router.post('/', express.json(), (req, res)=>{
     intentMap.set('DefaultWelcomeIntent', welcome ) 
     intentMap.set('DoctorListName', docname ) 
     intentMap.set('History', history ) 
+    intentMap.set('Age', age ) 
+
 
 
     
@@ -820,5 +1039,22 @@ router.post('/', express.json(), (req, res)=>{
 module.exports = router;
 
 
+
+
+
+
+
+// users.forEach((user)=>{
+//   NashaBot.telegram.sendMessage(user.chat_id,
+//       '<b>Номер заказа: </b> <i>'+lead.items[0].id+'</i>\
+//       \n<b>Имя: </b> <i>'+contact[0].name +'</i>\
+//       \n<b>Сумма: </b> <i>'+ lead.items[0].sale + '</i>\
+//       \n<b>Заказ: </b> <i>'+ naimen + '</i>\
+//       \n<b>Номер телефона: </b> <i>'+nomer + '</i>\
+//       \n<b>Адрес: </b> <i>'+ addres + '</i>\
+//       \n<b>Примечание: </b>'+ dop
+//       ,
+//   markup)
+// })
 
 
