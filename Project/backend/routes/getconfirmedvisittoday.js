@@ -12,9 +12,6 @@ router.get("/", async (req, res) => {
       var end = new Date();
       end.setHours(23,59,59,999);
 
-
-      // date_visit: {$gte: start, $lt: end} , 
-
       let today_visit = await Visit.find({date_visit: {$gte: start, $lt: end} , doctor_id: parseInt(req.query.doctor) , status: "confirmed"})
       console.log(today_visit)
 

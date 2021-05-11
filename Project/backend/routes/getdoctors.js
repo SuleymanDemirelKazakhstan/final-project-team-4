@@ -3,6 +3,7 @@ const url = require('url');
 let Doctor = require('../models/doctor.model');
 let Spec = require('../models/specialization.model');
 let Patient = require('../models/patient.model');
+let Visit = require('../models/visit.model');
 
 
 router.get("/", async (req, res) => {
@@ -16,8 +17,21 @@ router.get("/", async (req, res) => {
           spec.push(s);
         }
 
-        res.send({doctor:doctor,spec:spec, user: patient});
-      } catch (error) {
+        let visit_conf = await Visit.findOne({doctor_id: parseInt(req.query.doctor), user_id:parseInt(req.query.user), status: "confirmed"});
+        let visit_not_conf = await Visit.findOne({doctor_id: parseInt(req.query.doctor), user_id:parseInt(req.query.user), status: "not confirmed"});
+        // if (visit_conf){
+        //   res.send({doctor:doctor,spec:spec, user: patient, visit: visit_conf});
+        // }else if (visit_not_conf){
+        //   res.send({doctor:doctor,spec:spec, user: patient, visit: visit_not_conf});
+        // }else{
+        //   res.send({doctor:doctor,spec:spec, user: patient});
+        // }
+        if (visit_conf || visit_not_conf){
+          res.send({doctor:doctor,spec:spec, user: patient, visit: true});
+        }else{
+          res.send({doctor:doctor,spec:spec, user: patient, visit: false });
+        }
+      } catch (error) {parseInt(req.query.doctor)
         console.log('err')
         res.send(error);
       }

@@ -19,5 +19,7 @@ router.use("/getconfirmedvisitmonth", require("./getconfirmedvisitmonth"));
 
 router.use("/getnotconfirmedvisit", require("./getnotconfirmedvisit"));
 
+router.use("/getcabinetvisit", require("./getcabinetvisit"));
+
 
 module.exports = router;
