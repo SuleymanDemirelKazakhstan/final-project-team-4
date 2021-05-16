@@ -288,7 +288,7 @@ router.post('/', express.json(), (req, res)=>{
       
       patient.symptoms = symp;
       patient.save();
-      
+
       var answer = "Я правильно понял, Вас волнует: ";
       for(let i = 0; i<symp.length-1; i++){
         answer = answer + symp[i] + ", ";
@@ -903,12 +903,10 @@ router.post('/', express.json(), (req, res)=>{
         agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
       }
       else if (patient.all_ok==2){
-        let visit = await Visit.findOne({user_id: id, status: "not confirmed"})
-        patient.all_ok = 1
-        visit.patient_comment = agent.query; 
+        patient.all_ok = 1;
+        patient.allergy = agent.query; 
         answer = "Ваша заявка на прием принята. Ожидайте пока доктор подтвердит вашу запись."
         patient.save();
-        visit.save();
         agent.add(answer)
       }
     }
@@ -1136,12 +1134,13 @@ router.post('/', express.json(), (req, res)=>{
       let patient = await Patient.findOne({chat_id: id})
       
       if (patient.all_ok==2){
-        let visit = await Visit.findOne({user_id: id, status: "not confirmed"})
+        // let visit = await Visit.findOne({user_id: id, status: "not confirmed"})
         patient.all_ok = 1
-        visit.patient_comment = agent.query; 
-        answer = "Ваша заявка на прием принята. Ожидайте пока доктор подтвердит вашу запись. "
+        patient.allergy = agent.query; 
+        // visit.patient_comment = agent.query; 
+        answer = "Ваша заявка на прием принята. Ожидайте пока доктор подтвердит вашу запись."
         patient.save();
-        visit.save();
+        // visit.save();
       }
       // else if (patient.check_name==1){
 

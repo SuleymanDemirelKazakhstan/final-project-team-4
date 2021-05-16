@@ -23,5 +23,8 @@ router.use("/getcabinetvisit", require("./getcabinetvisit"));
 
 router.use("/login", require("./login"));
 
+router.use("/getalldoctors", require("./getalldoctors"));
+
+router.use("/redirection", require("./redirection"));
 
 module.exports = router;
