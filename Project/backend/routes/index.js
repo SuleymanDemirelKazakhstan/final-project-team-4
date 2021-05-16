@@ -21,5 +21,7 @@ router.use("/getnotconfirmedvisit", require("./getnotconfirmedvisit"));
 
 router.use("/getcabinetvisit", require("./getcabinetvisit"));
 
+router.use("/login", require("./login"));
+
 
 module.exports = router;

@@ -2,22 +2,19 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const diseaseSchema = new Schema({
-    name:{
+    name_en:{
         type:String,
-        required:true,
-        unique:true,
-        trim:true
     },
-    symptom_list: { type : Array , "default" : [] },
+    name_ru:{
+        type:String,
+    },
+    specialization_ids: { type : Array , "default" : [] },
     frequency:{
-        type:Number,
-        required:true,
-        unique:true,
-        trim:true
+        type:Number
     }
 },{timestamps:true,
 })
 
-const Disease = mongoose.model('Disease',diseaseSchema);
+const Disease = mongoose.model('Disease',diseaseSchema, "disease");
 
 module.exports = Disease;

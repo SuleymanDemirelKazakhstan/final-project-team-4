@@ -13,6 +13,6 @@ const analysisSchema = new Schema({
 })
 
 
-const Analysis = mongoose.model('Analysis',analysisSchema);
+const Analysis = mongoose.model('Analysis',analysisSchema, 'analyses');
 
 module.exports = Analysis;
