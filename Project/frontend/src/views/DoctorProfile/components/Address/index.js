@@ -44,7 +44,7 @@ const Address = props => {
         <Grid container direction='column' item md={12} xs={12} justify='center'alignItems='center' >
             <LocationOnIcon className={classes.icon}></LocationOnIcon>
             <h2 className={classes.textCenter} style={header}>МЕСТО ПРИЕМА</h2>
-            <p className={classes.p} style={p} >Республика Казахстан, г.Алматы, ул. Розыбакиева, д. 247, корпус 1</p>
+            <p className={classes.p} style={p} >{props.address.adr}</p>
         </Grid>
     </Grid>
   );

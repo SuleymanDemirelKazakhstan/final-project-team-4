@@ -10,16 +10,10 @@ router.post("/", async (req, res) => {
     try {
       console.log(req.body.user_id)
 
-      var start = new Date();
-      start.setHours(0,0,0,0);
-      
-      var end = new Date();
-      end.setHours(23,59,59,999);
-
-      let visit = await Visit.findOne({date_visit: {$gte: start, $lt: end} , user_id: req.body.user_id , doctor_id: req.body.doctor_id , status: "confirmed"})
+      let visit = await Visit.findOne({ user_id: req.body.user_id , doctor_id: req.body.doctor_id , status: "confirmed"})
       visit.status = "cancel"
       await visit.save();
-      MedBot.telegram.sendMessage(req.user_id, 'По причине того что Вы не пришли визит был отменен.');
+      MedBot.telegram.sendMessage(req.body.user_id, 'По причине того что Вы не пришли визит был отменен.');
       
       res.sendStatus(200);
     } catch (error) {

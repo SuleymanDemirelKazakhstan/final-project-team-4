@@ -27,7 +27,6 @@ router.post('/', express.json(), (req, res)=>{
 
     const prev_intent = Object.keys(agent.context.contexts)[0];
     console.log(prev_intent)
-    // console.log(agent)
 
     async function name(agent){
       let id;
@@ -282,13 +281,9 @@ router.post('/', express.json(), (req, res)=>{
       }else{
         id = agent.originalRequest.payload.data.from.id;
       }
-      let patient = await Patient.findOne({chat_id: id})
 
       const symp = agent.parameters.symptom;
       
-      patient.symptoms = symp;
-      patient.save();
-
       var answer = "Я правильно понял, Вас волнует: ";
       for(let i = 0; i<symp.length-1; i++){
         answer = answer + symp[i] + ", ";
@@ -328,6 +323,7 @@ router.post('/', express.json(), (req, res)=>{
       const prev_intent = Object.keys(agent.context.contexts)[0];
       let patient = await Patient.findOne({chat_id: id})
         
+      // console.log(prev_intent)
       var answer = ""
       
       if (prev_intent == "namesurname"){
@@ -394,6 +390,8 @@ router.post('/', express.json(), (req, res)=>{
               }
           });
           agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+
+          
         }else{
           answer = "Можете указать свой возраст"
           agent.add(answer);
@@ -631,7 +629,6 @@ router.post('/', express.json(), (req, res)=>{
 
       }
       else if (prev_intent == "symptomcheck-followup"){
-
         const symp = agent.context.contexts['symptomcheck-followup'].parameters.symptom;
         var diseases;
         console.log(symp)
@@ -707,20 +704,20 @@ router.post('/', express.json(), (req, res)=>{
         });
 
         if (success) {
-          console.log(results.toString());
+          console.log('result: ', results.toString());
 
           //get diseas from db by name_en
-          var diseases_db = await Disease.findOne({name_en: results.toString()});
+          // var diseases_db = await Disease.find({name_en: diseases});
 
           //get diseas specializations and add it to spec_db(array)
-          var spec_db = [];
-          for(let i = 0; i<diseases_db.specialization_ids.length; i++){
-            s = await Specialization.find({id: diseases_db.specialization_ids[i]});
-            spec_db.push(s)
-          }
-          // spec_db = [1, 2]
-          console.log(diseases_db.name_ru);
-          const answer = `По тем симптомам, что Вы нам дали, алгоритм предполагает что у Вас может быть: ${diseases_db.name_ru}.\nДоктора:`
+          var spec_db;
+          // for(let i = 0; i<diseases_db.specialization_ids.length-1; i++){
+          //   s = await Specialization.find({id: diseases_db.specialization_ids[i]});
+          //   spec_db.push(s)
+          // }
+          spec_db = [1, 2]
+          
+          const answer = `По тем симптомам, что Вы нам дали, алгоритм предпологает что у Вас может быть: ${results.toString()}.\nДоктора:`
           const payload = {
             "text": answer,
             "reply_markup": {
@@ -736,8 +733,9 @@ router.post('/', express.json(), (req, res)=>{
           for(let i = 0; i<spec_db.length; i++){
 
             // var doc = await Doctor.find({ specialization_ids: spec_db[i].id.toString()});
-            var doc = await Doctor.find({ specialization_ids: spec_db[i][0].id});
+            var doc = await Doctor.find({ specialization_ids: spec_db[i].toString()});
             docs.push(doc)
+            
           }
           var merged = [].concat.apply([], docs);
 
@@ -757,6 +755,7 @@ router.post('/', express.json(), (req, res)=>{
           for (i in uniqueObject) {
             fin_docs.push(uniqueObject[i]);
           }
+
           //for loop over doctors of specialization[i]
           fin_docs.forEach(async function(element) 
             { 
@@ -767,7 +766,6 @@ router.post('/', express.json(), (req, res)=>{
               }];
               payload.reply_markup.inline_keyboard.push(temp);
             });
-          console.log(payload);
 
           agent.add(new dfff.Payload(agent.TELEGRAM , payload, {rawPayload: false, sendAsMessage: true}));
         }
@@ -814,18 +812,18 @@ router.post('/', express.json(), (req, res)=>{
       }else{
         id = agent.originalRequest.payload.data.from.id;
       }
-      
+
+      const prev_intent = Object.keys(agent.context.contexts)[0];
+      console.log(prev_intent)
       var answer = ""
-      let patient = await Patient.findOne({chat_id: id})
+
       if (prev_intent == "defaultwelcomeintent-followup") {
         answer = "Можете написать свое имя"
         agent.add(answer);
+
       }
       else if (prev_intent == "namesurname"){
         answer = "Можете повторить свое имя"
-        // let patient = await Patient.findOne({chat_id: id})
-        // patient.check_name = 1;
-        // patient.save();
         agent.add(answer);
 
       }
@@ -863,6 +861,7 @@ router.post('/', express.json(), (req, res)=>{
       else if (prev_intent == "symptomcheck-followup"){
         answer = "Можете повторить что Вас волнует"
         agent.add(answer);
+
       }  
       else if (prev_intent == "all-followup"){
 
@@ -902,13 +901,6 @@ router.post('/', express.json(), (req, res)=>{
 
         agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
       }
-      else if (patient.all_ok==2){
-        patient.all_ok = 1;
-        patient.allergy = agent.query; 
-        answer = "Ваша заявка на прием принята. Ожидайте пока доктор подтвердит вашу запись."
-        patient.save();
-        agent.add(answer)
-      }
     }
 
 
@@ -924,6 +916,7 @@ router.post('/', express.json(), (req, res)=>{
   
       let answer  = "";
       if (patient){
+
         
         patient.all_ok = 1;
         let name = "";
@@ -990,14 +983,6 @@ router.post('/', express.json(), (req, res)=>{
         await patient.save();
       }else{
         answer = "Здравствуй! Я Мед Бот, я помогу Вам записаться к врачу.  Как Вас зовут? (Ф.И.О)"
-        // const new_patient = new Patient({
-        //   chat_id: id,
-        //   check_name: 1
-        // })
-        // new_patient.save((err, saved) => {
-        //   if (err){
-        //     console.log(err)
-        // }});
         agent.add(answer);
       }
       
@@ -1129,49 +1114,18 @@ router.post('/', express.json(), (req, res)=>{
         id = agent.originalRequest.payload.data.from.id;
       }
       
-
       let answer = 'Можете, пожалуйста, выразить свою мысль по-другому.'
       let patient = await Patient.findOne({chat_id: id})
       
       if (patient.all_ok==2){
-        // let visit = await Visit.findOne({user_id: id, status: "not confirmed"})
+        let visit = await Visit.findOne({user_id: id, status: "confirmed"})
         patient.all_ok = 1
-        patient.allergy = agent.query; 
-        // visit.patient_comment = agent.query; 
-        answer = "Ваша заявка на прием принята. Ожидайте пока доктор подтвердит вашу запись."
-        patient.save();
-        // visit.save();
-      }
-      // else if (patient.check_name==1){
-
-      //   let name = agent.query; 
-      //   patient.firstName = name.split(' ')[1],
-      //   patient.lastName = name.split(' ')[0],
-      //   patient.patronymic = name.split(' ')[2]
-      //   await patient.save();
-      
-      //   const answer = {
-      //     "text": `${name}, правильно?`,
-      //     "reply_markup": {
-      //       "inline_keyboard": [
-      //         [
-      //           {
-      //             "text": "Да",
-      //             "callback_data": "Да"
-      //           }
-      //         ],
-      //         [
-      //           {
-      //             "text": "Нет",
-      //             "callback_data": "Нет"
-      //           }
-      //         ]
-      //       ]
-      //     }
-      //   };
-      //   agent.add(new dfff.Payload(agent.TELEGRAM , answer, {rawPayload: false, sendAsMessage: true}));
+        visit.patient_comment = agent.query; 
+        answer = "Мы вас записали. Спасибо за доверение к нам"
+        patient.save()
+        visit.save()
         
-      // }
+      }
 
       agent.add(answer)
     }

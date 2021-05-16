@@ -4,7 +4,7 @@ import { Grid, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: '2rem'
+    // padding: '2rem'
   },
   content: {
     paddingTop: 150,
@@ -34,13 +34,12 @@ const NotFound = () => {
           xs={12}
         >
           <div className={classes.content}>
-            <Typography variant="h3" style={{color:'black'}}>
-              404: The page you are looking for isn’t here
+            <Typography variant="h4" style={{color:'black'}}>
+              404: Кажется что-то пошло не так.
             </Typography>
-            {/* <Typography variant="subtitle2">
-              You either tried some shady route or you came here by mistake.
-              Whichever it is, try using the navigation
-            </Typography> */}
+            <Typography variant="subtitle2">
+              Страница не найдена. Возможно она устарела, была удалена или Вы ввели неверный адрес
+            </Typography>
             {/* <img
               alt="Under development"
               className={classes.image}

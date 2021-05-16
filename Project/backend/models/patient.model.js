@@ -7,26 +7,42 @@ const patientSchema = new Schema({
     chat_id:{
         type:Number,
         required:true,
+        // unique:true,
+        // trim:true,
     },
     firstName:{
         type:String,
-        // required:true,
+        required:true,
+        // unique:true,
+        // trim:true,
     },
     lastName:{
         type:String,
-        // required:true,
+        required:true,
+        // unique:true,
+        // trim:true,
     },
     patronymic:{
         type:String,
+        // required:true,
+        // unique:true,
+        // trim:true,
     },
     phoneNumber:{
         type:String,
+        // required:true,
+        // unique:true,
+        // trim:true,
     },
     sex:{
         type:String,
+        // required:true,
     },
     age:{
         type:Number, 
+        // required:true,
+        // unique:true,
+        // trim:true,
     },
     blood_type:{
         type:Number, 
@@ -43,12 +59,10 @@ const patientSchema = new Schema({
     all_ok:{
         type: Number, 
         default: 0
-    },
-    check_name:{
-        type: Number, 
-        default: 0
-    },
-    symptoms: { type : Array , "default" : [] }
+        // required:true,
+        // unique:true,
+        // trim:true,
+    }
 },{timestamps:true,
 })
 

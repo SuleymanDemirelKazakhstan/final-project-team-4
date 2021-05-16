@@ -4,25 +4,23 @@ import { Switch, Redirect } from 'react-router-dom';
 import { RouteWithLayout } from './components';
 
 import { DoctorProfile as DoctorLayout} from './layouts';
-// import { Login as LoginLayout} from './layouts';
 import { Main as MainLayout } from './layouts';
-// import { Minimal as MinimalLayout } from './layouts';
 
 import {
   DoctorProfile as DoctorProfileView,
   Login as LoginView,
-  DoctorAdmin as DoctorCabinetView
-  // NotFound as NotFoundView,
+  DoctorAdmin as DoctorCabinetView,
+  NotFound as NotFoundView,
 } from './views';
 
 const Routes = (props) => {
   return (
     <Switch>
-      <Redirect exact from="/" to="/doctor" />
+      <Redirect exact from="/" to="/doctor/1/user/287016579" />
       <RouteWithLayout
-        component={MainLayout}
+        component={LoginView}
         exact
-        layout={LoginView}
+        layout={MainLayout}
         path="/login"
       />
       <RouteWithLayout
@@ -30,22 +28,22 @@ const Routes = (props) => {
         exact
         layout={DoctorLayout}
         isDesktop = {props.isDesktop}
-        path="/doctor/:id"
+        path="/doctor/:id/user/:user_id"
       />
       <RouteWithLayout
-        component={MainLayout}
+        component={DoctorCabinetView}
         exact
+        layout={MainLayout}
         isDesktop = {props.isDesktop}
-        layout={DoctorCabinetView}
         path="/cabinet/:id"
       />
-      {/* <RouteWithLayout
+      <RouteWithLayout
         component={NotFoundView}
         exact
-        layout={MinimalLayout}
+        layout={MainLayout}
         path="/not-found"
       />
-      <Redirect to="/not-found" />  */}
+      <Redirect to="/not-found" /> 
     </Switch>
   );
 };

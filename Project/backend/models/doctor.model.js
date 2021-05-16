@@ -86,6 +86,9 @@ const doctorSchema = new Schema({
     password: { 
         type: String, 
         required: true 
+    },
+    calendar_id:{
+        type: String, 
     }
 
 },{timestamps:true,
