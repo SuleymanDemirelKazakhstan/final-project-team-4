@@ -1,0 +1,22 @@
+Report of Week#9
+
+All:
+We tried to formulate all the questions correctly, but medicine is too extensive a science, 
+and we do not have a sufficient level of knowledge in it. Therefore, it was very difficult to systematize
+the symptoms and it was impossible to always ask the questions in the same order, since each case and each 
+disease may contain different explanations from the doctor. Anel found another solution to our problem: 
+use Dialogflow as nlp for text recognition. Now we can directly ask what symptoms a person has, 
+and he will be able to write himself what worries him, and Dialogflow will recognize his text. 
+And now the telegram bot functionality is completely suitable for us and we decided to switch to it.
+ 
+Valieva Nasiba: Created a database and collections in Mongo Atlas for everyone.
+
+Tazhibayeva Aidana: completed the translation of the symptom database, completed the doctors and specializations in our database
+ 
+Dussenova Anel: created the "Symptom" Entity in the dialogue flow, filled in the data of symptoms and 
+their synonyms to train the dialogue flow to correctly recognize symptoms
+ 
+Dikanbaeva Assura: started designing the landing page: Doctor's profile, where was the main information about doctors (their names, specializations, background,
+availible time and price)
+ 
+Aitkali Sultan: Controlled the whole process, synchronized results with the plan. Hepled to Assura with design. 
